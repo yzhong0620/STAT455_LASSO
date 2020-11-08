@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="Chapter 6 A Real Example | Shrinkage Methods" />
+<meta property="og:type" content="book" />
+
+
+
+
+
+
+<meta name="date" content="2020-04-24" />
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+
+<meta name="description" content="Chapter 6 A Real Example | Shrinkage Methods">
+
+<title>Chapter 6 A Real Example | Shrinkage Methods</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<link rel="stylesheet" href="toc.css" type="text/css" />
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container-fluid main-container">
+
+
+<div class="row">
+<div class="col-sm-12">
+<div id="TOC">
+<ul>
+<li class="has-sub"><a href="index.html#motivation"><span class="toc-section-number">1</span> Motivation</a><ul>
+<li><a href="1-1-the-ordinary-least-squared-model.html#the-ordinary-least-squared-model"><span class="toc-section-number">1.1</span> The ordinary least squared model</a></li>
+<li><a href="1-2-several-solutions-proposed-by-statisticians.html#several-solutions-proposed-by-statisticians"><span class="toc-section-number">1.2</span> Several solutions proposed by statisticians</a></li>
+<li><a href="1-3-shrinkage.html#shrinkage"><span class="toc-section-number">1.3</span> Shrinkage</a></li>
+</ul></li>
+<li class="has-sub"><a href="2-ridge-regression.html#ridge-regression"><span class="toc-section-number">2</span> Ridge Regression</a><ul>
+<li><a href="2-1-definition.html#definition"><span class="toc-section-number">2.1</span> Definition</a></li>
+<li><a href="2-2-ridge-regression-1.html#ridge-regression-1"><span class="toc-section-number">2.2</span> Ridge Regression:</a></li>
+</ul></li>
+<li class="has-sub"><a href="3-how-ridge-works.html#how-ridge-works"><span class="toc-section-number">3</span> How Ridge Works</a><ul>
+<li><a href="3-how-ridge-works.html#univariate-example"><span class="toc-section-number">3.0.1</span> Univariate example</a></li>
+<li><a href="3-how-ridge-works.html#higher-dimension-ridge-regression"><span class="toc-section-number">3.0.2</span> Higher dimension ridge regression</a></li>
+<li><a href="3-how-ridge-works.html#the-tuning-parameter"><span class="toc-section-number">3.0.3</span> The tuning parameter</a></li>
+</ul></li>
+<li class="has-sub"><a href="4-lasso.html#lasso"><span class="toc-section-number">4</span> Lasso</a><ul>
+<li><a href="4-1-standardize-the-dataset.html#standardize-the-dataset"><span class="toc-section-number">4.1</span> Standardize the dataset</a></li>
+</ul></li>
+<li class="has-sub"><a href="5-how-lasso-performs-variable-selection.html#how-lasso-performs-variable-selection"><span class="toc-section-number">5</span> How Lasso performs variable selection</a><ul>
+<li><a href="5-how-lasso-performs-variable-selection.html#univariate-example-1"><span class="toc-section-number">5.0.1</span> univariate example</a></li>
+<li><a href="5-how-lasso-performs-variable-selection.html#shrinkage-explaination-from-geometric-perspective"><span class="toc-section-number">5.0.2</span> Shrinkage explaination from geometric perspective</a></li>
+</ul></li>
+<li class="has-sub"><a href="6-a-real-example.html#a-real-example"><span class="toc-section-number">6</span> A Real Example</a><ul>
+<li><a href="6-a-real-example.html#cross-validation"><span class="toc-section-number">6.0.1</span> Cross validation</a></li>
+<li><a href="6-a-real-example.html#ols"><span class="toc-section-number">6.0.2</span> OLS</a></li>
+<li><a href="6-a-real-example.html#ridge"><span class="toc-section-number">6.0.3</span> RIDGE</a></li>
+<li><a href="6-a-real-example.html#lasso-1"><span class="toc-section-number">6.0.4</span> LASSO</a></li>
+<li><a href="6-a-real-example.html#test-data"><span class="toc-section-number">6.0.5</span> Test data</a></li>
+<li><a href="6-a-real-example.html#activity"><span class="toc-section-number">6.0.6</span> Activity</a></li>
+<li><a href="6-a-real-example.html#ols-1"><span class="toc-section-number">6.0.7</span> OLS</a></li>
+<li><a href="6-a-real-example.html#ridge-1"><span class="toc-section-number">6.0.8</span> RIDGE</a></li>
+<li><a href="6-a-real-example.html#lasso-2"><span class="toc-section-number">6.0.9</span> LASSO</a></li>
+<li><a href="6-a-real-example.html#test-data-1"><span class="toc-section-number">6.0.10</span> Test data</a></li>
+<li><a href="6-1-data-summary.html#data-summary"><span class="toc-section-number">6.1</span> Data Summary</a></li>
+</ul></li>
+<li class="has-sub"><a href="7-bayesian-lasso.html#bayesian-lasso"><span class="toc-section-number">7</span> Bayesian Lasso</a><ul>
+<li><a href="7-1-generalization-of-shrinkage-methods-from-bayes-perspective.html#generalization-of-shrinkage-methods-from-bayes-perspective"><span class="toc-section-number">7.1</span> Generalization of shrinkage methods from Bayes perspective</a></li>
+<li class="has-sub"><a href="7-2-bayesian-interpretation.html#bayesian-interpretation"><span class="toc-section-number">7.2</span> Bayesian Interpretation</a><ul>
+<li><a href="7-2-bayesian-interpretation.html#posterior"><span class="toc-section-number">7.2.1</span> Posterior</a></li>
+<li><a href="7-2-bayesian-interpretation.html#posterior-mode"><span class="toc-section-number">7.2.2</span> Posterior Mode</a></li>
+</ul></li>
+</ul></li>
+<li><a href="8-limitations-of-ridge-and-lasso.html#limitations-of-ridge-and-lasso"><span class="toc-section-number">8</span> Limitations of Ridge and Lasso</a></li>
+<li><a href="9-reference.html#reference"><span class="toc-section-number">9</span> Reference</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="a-real-example" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> A Real Example</h1>
+<div id="cross-validation" class="section level3">
+<h3><span class="header-section-number">6.0.1</span> Cross validation</h3>
+<blockquote>
+<p>Cross validation randomly divides the data set into k folds, k-1 training groups to which models will be fitted and one testing group to test the model.</p>
+</blockquote>
+<p><img src="cv.PNG" />
+(from Hands-On Machine Learning with R 2.4 by Bradley Boehmke &amp; Brandon Greenwell)</p>
+</div>
+<div id="ols" class="section level3">
+<h3><span class="header-section-number">6.0.2</span> OLS</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">set.seed</span>(<span class="dv">455</span>)</a>
+<a class="sourceLine" id="cb1-2" title="2">bf_ols &lt;-<span class="st"> </span><span class="kw">train</span>(</a>
+<a class="sourceLine" id="cb1-3" title="3">  bodyfat <span class="op">~</span><span class="st"> </span>.,</a>
+<a class="sourceLine" id="cb1-4" title="4">  <span class="dt">data =</span> bf_train, </a>
+<a class="sourceLine" id="cb1-5" title="5">  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>,</a>
+<a class="sourceLine" id="cb1-6" title="6">  <span class="dt">trControl =</span> <span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;cv&quot;</span>, </a>
+<a class="sourceLine" id="cb1-7" title="7">                           <span class="dt">number =</span> <span class="dv">10</span>), </a>
+<a class="sourceLine" id="cb1-8" title="8">  <span class="dt">na.action =</span> na.omit</a>
+<a class="sourceLine" id="cb1-9" title="9">)</a>
+<a class="sourceLine" id="cb1-10" title="10"></a>
+<a class="sourceLine" id="cb1-11" title="11"><span class="kw">coefficients</span>(bf_ols<span class="op">$</span>finalModel)</a></code></pre></div>
+<pre><code>## (Intercept)         Age      Weight      Height        Neck       Chest 
+## 10.53771759  0.07344948  0.01129956 -0.05372288 -0.80411627 -0.11789624 
+##     Abdomen         Hip       Thigh        Knee       Ankle      Biceps 
+##  0.98528673 -0.43320085  0.37243770 -0.25791914  0.24878673  0.07757529 
+##     Forearm       Wrist 
+##  0.58521403 -1.97978709</code></pre>
+</div>
+<div id="ridge" class="section level3">
+<h3><span class="header-section-number">6.0.3</span> RIDGE</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">set.seed</span>(<span class="dv">455</span>)</a>
+<a class="sourceLine" id="cb3-2" title="2">bf_ridge &lt;-<span class="st"> </span><span class="kw">train</span>(</a>
+<a class="sourceLine" id="cb3-3" title="3">  bodyfat <span class="op">~</span><span class="st"> </span>.,</a>
+<a class="sourceLine" id="cb3-4" title="4">  <span class="dt">data =</span> bf_train, </a>
+<a class="sourceLine" id="cb3-5" title="5">  <span class="dt">method =</span> <span class="st">&quot;glmnet&quot;</span>,</a>
+<a class="sourceLine" id="cb3-6" title="6">  <span class="dt">trControl =</span> <span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;cv&quot;</span>, </a>
+<a class="sourceLine" id="cb3-7" title="7">                           <span class="dt">number =</span> <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb3-8" title="8">  <span class="dt">tuneGrid =</span> <span class="kw">data.frame</span>(<span class="dt">alpha =</span> <span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb3-9" title="9">                        <span class="dt">lambda =</span> <span class="dv">10</span><span class="op">^</span><span class="kw">seq</span>(<span class="op">-</span><span class="dv">3</span>,<span class="dv">0</span>, <span class="dt">length =</span> <span class="dv">100</span>)),</a>
+<a class="sourceLine" id="cb3-10" title="10">  <span class="dt">na.action =</span> na.omit</a>
+<a class="sourceLine" id="cb3-11" title="11">)</a>
+<a class="sourceLine" id="cb3-12" title="12"></a>
+<a class="sourceLine" id="cb3-13" title="13">bf_ridge<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-14" title="14"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>lambda,<span class="dt">y=</span>RMSE))<span class="op">+</span></a>
+<a class="sourceLine" id="cb3-15" title="15"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="fl">.5</span>, <span class="dt">alpha =</span> <span class="fl">.5</span>)</a></code></pre></div>
+<p><img src="Shrinkage-Methods_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">bf_ridge<span class="op">$</span>bestTune<span class="op">$</span>lambda</a></code></pre></div>
+<pre><code>## [1] 0.6135907</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">plot</span>(bf_ridge<span class="op">$</span>finalModel,<span class="dt">xvar=</span><span class="st">&quot;lambda&quot;</span>,<span class="dt">label=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<p><img src="Shrinkage-Methods_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">set.seed</span>(<span class="dv">455</span>)</a>
+<a class="sourceLine" id="cb7-2" title="2">bf_ridge_best &lt;-<span class="st"> </span><span class="kw">train</span>(</a>
+<a class="sourceLine" id="cb7-3" title="3">  bodyfat <span class="op">~</span><span class="st"> </span>.,</a>
+<a class="sourceLine" id="cb7-4" title="4">  <span class="dt">data =</span> bf_train, </a>
+<a class="sourceLine" id="cb7-5" title="5">  <span class="dt">method =</span> <span class="st">&quot;glmnet&quot;</span>,</a>
+<a class="sourceLine" id="cb7-6" title="6">  <span class="dt">trControl =</span> <span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;cv&quot;</span>, </a>
+<a class="sourceLine" id="cb7-7" title="7">                           <span class="dt">number =</span> <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb7-8" title="8">  <span class="dt">tuneGrid =</span> <span class="kw">data.frame</span>(<span class="dt">alpha =</span> <span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb7-9" title="9">                        <span class="dt">lambda =</span> <span class="fl">0.6135907</span>),</a>
+<a class="sourceLine" id="cb7-10" title="10">  <span class="dt">na.action =</span> na.omit</a>
+<a class="sourceLine" id="cb7-11" title="11">)</a>
+<a class="sourceLine" id="cb7-12" title="12"></a>
+<a class="sourceLine" id="cb7-13" title="13"><span class="kw">coefficients</span>(bf_ridge_best<span class="op">$</span>finalModel,<span class="fl">0.6135907</span>)</a></code></pre></div>
+<pre><code>## 14 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                       1
+## (Intercept) -6.66437709
+## Age          0.10958796
+## Weight       0.01254154
+## Height      -0.09323689
+## Neck        -0.53928058
+## Chest        0.09454023
+## Abdomen      0.55774792
+## Hip         -0.03457160
+## Thigh        0.20869408
+## Knee        -0.11918654
+## Ankle        0.04959057
+## Biceps       0.06913356
+## Forearm      0.43517058
+## Wrist       -1.97856329</code></pre>
+</div>
+<div id="lasso-1" class="section level3">
+<h3><span class="header-section-number">6.0.4</span> LASSO</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">set.seed</span>(<span class="dv">455</span>)</a>
+<a class="sourceLine" id="cb9-2" title="2">bf_lasso &lt;-<span class="st"> </span><span class="kw">train</span>(</a>
+<a class="sourceLine" id="cb9-3" title="3">  bodyfat <span class="op">~</span><span class="st"> </span>.,</a>
+<a class="sourceLine" id="cb9-4" title="4">  <span class="dt">data =</span> bf_train, </a>
+<a class="sourceLine" id="cb9-5" title="5">  <span class="dt">method =</span> <span class="st">&quot;glmnet&quot;</span>,</a>
+<a class="sourceLine" id="cb9-6" title="6">  <span class="dt">trControl =</span> <span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;cv&quot;</span>, </a>
+<a class="sourceLine" id="cb9-7" title="7">                           <span class="dt">number =</span> <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb9-8" title="8">  <span class="dt">tuneGrid =</span> <span class="kw">data.frame</span>(<span class="dt">alpha =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb9-9" title="9">                        <span class="dt">lambda =</span> <span class="dv">10</span><span class="op">^</span><span class="kw">seq</span>(<span class="op">-</span><span class="dv">3</span>, <span class="dv">-1</span>, <span class="dt">length =</span> <span class="dv">100</span>)),</a>
+<a class="sourceLine" id="cb9-10" title="10">  <span class="dt">na.action =</span> na.omit</a>
+<a class="sourceLine" id="cb9-11" title="11">)</a>
+<a class="sourceLine" id="cb9-12" title="12"></a>
+<a class="sourceLine" id="cb9-13" title="13">bf_lasso<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb9-14" title="14"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>lambda,<span class="dt">y=</span>RMSE))<span class="op">+</span></a>
+<a class="sourceLine" id="cb9-15" title="15"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="fl">.5</span>, <span class="dt">alpha =</span> <span class="fl">.5</span>)</a></code></pre></div>
+<p><img src="Shrinkage-Methods_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">bf_lasso<span class="op">$</span>bestTune<span class="op">$</span>lambda</a></code></pre></div>
+<pre><code>## [1] 0.05214008</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">plot</span>(bf_lasso<span class="op">$</span>finalModel,<span class="dt">xvar=</span><span class="st">&#39;lambda&#39;</span>,<span class="dt">label=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<p><img src="Shrinkage-Methods_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">set.seed</span>(<span class="dv">455</span>)</a>
+<a class="sourceLine" id="cb13-2" title="2">bf_lasso_best &lt;-<span class="st"> </span><span class="kw">train</span>(</a>
+<a class="sourceLine" id="cb13-3" title="3">  bodyfat <span class="op">~</span><span class="st"> </span>.,</a>
+<a class="sourceLine" id="cb13-4" title="4">  <span class="dt">data =</span> bf_train, </a>
+<a class="sourceLine" id="cb13-5" title="5">  <span class="dt">method =</span> <span class="st">&quot;glmnet&quot;</span>,</a>
+<a class="sourceLine" id="cb13-6" title="6">  <span class="dt">trControl =</span> <span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;cv&quot;</span>, </a>
+<a class="sourceLine" id="cb13-7" title="7">                           <span class="dt">number =</span> <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb13-8" title="8">  <span class="dt">tuneGrid =</span> <span class="kw">data.frame</span>(<span class="dt">alpha =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb13-9" title="9">                        <span class="dt">lambda =</span> <span class="fl">0.05214008</span>),</a>
+<a class="sourceLine" id="cb13-10" title="10">  <span class="dt">na.action =</span> na.omit</a>
+<a class="sourceLine" id="cb13-11" title="11">)</a>
+<a class="sourceLine" id="cb13-12" title="12"></a>
+<a class="sourceLine" id="cb13-13" title="13"><span class="kw">coefficients</span>(bf_lasso_best<span class="op">$</span>finalModel,<span class="fl">0.05214008</span>)</a></code></pre></div>
+<pre><code>## 14 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                       1
+## (Intercept)  2.55555342
+## Age          0.06498441
+## Weight       .         
+## Height      -0.05280602
+## Neck        -0.72727859
+## Chest       -0.04034631
+## Abdomen      0.89456371
+## Hip         -0.28106283
+## Thigh        0.23163419
+## Knee        -0.11591528
+## Ankle        0.12930095
+## Biceps       0.04495192
+## Forearm      0.51586799
+## Wrist       -1.89819119</code></pre>
+</div>
+<div id="test-data" class="section level3">
+<h3><span class="header-section-number">6.0.5</span> Test data</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">bf_test<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb15-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pred_bf =</span> <span class="kw">predict</span>(bf_ols, <span class="dt">newdata =</span> bf_test)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">RMSE =</span> <span class="kw">sqrt</span>(<span class="kw">mean</span>((bodyfat <span class="op">-</span><span class="st"> </span>pred_bf)<span class="op">^</span><span class="dv">2</span>)))</a></code></pre></div>
+<pre><code>##       RMSE
+## 1 5.023873</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">bf_test<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb17-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pred_bf =</span> <span class="kw">predict</span>(bf_ridge_best, <span class="dt">newdata =</span> bf_test)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">RMSE =</span> <span class="kw">sqrt</span>(<span class="kw">mean</span>((bodyfat <span class="op">-</span><span class="st"> </span>pred_bf)<span class="op">^</span><span class="dv">2</span>)))</a></code></pre></div>
+<pre><code>##       RMSE
+## 1 4.885821</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1">bf_test<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb19-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pred_bf =</span> <span class="kw">predict</span>(bf_lasso_best, <span class="dt">newdata =</span> bf_test)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb19-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">RMSE =</span> <span class="kw">sqrt</span>(<span class="kw">mean</span>((bodyfat <span class="op">-</span><span class="st"> </span>pred_bf)<span class="op">^</span><span class="dv">2</span>)))</a></code></pre></div>
+<pre><code>##       RMSE
+## 1 4.901642</code></pre>
+</div>
+<div id="activity" class="section level3">
+<h3><span class="header-section-number">6.0.6</span> Activity</h3>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">set.seed</span>(<span class="dv">455</span>)</a>
+<a class="sourceLine" id="cb21-2" title="2">cars_split &lt;-<span class="st"> </span><span class="kw">initial_split</span>(cars2018, <span class="dt">prop =</span> <span class="fl">.7</span>)</a>
+<a class="sourceLine" id="cb21-3" title="3">cars_train &lt;-<span class="st"> </span><span class="kw">training</span>(cars_split)</a>
+<a class="sourceLine" id="cb21-4" title="4">cars_test &lt;-<span class="st"> </span><span class="kw">testing</span>(cars_split)</a></code></pre></div>
+</div>
+<div id="ols-1" class="section level3">
+<h3><span class="header-section-number">6.0.7</span> OLS</h3>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1"><span class="kw">set.seed</span>(<span class="dv">455</span>)</a>
+<a class="sourceLine" id="cb22-2" title="2">cars_ols &lt;-<span class="st"> </span><span class="kw">train</span>(</a>
+<a class="sourceLine" id="cb22-3" title="3">  MPG <span class="op">~</span><span class="st"> </span>.,</a>
+<a class="sourceLine" id="cb22-4" title="4">  <span class="dt">data =</span> cars_train, </a>
+<a class="sourceLine" id="cb22-5" title="5">  <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>,</a>
+<a class="sourceLine" id="cb22-6" title="6">  <span class="dt">trControl =</span> <span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;cv&quot;</span>, </a>
+<a class="sourceLine" id="cb22-7" title="7">                           <span class="dt">number =</span> <span class="dv">10</span>), </a>
+<a class="sourceLine" id="cb22-8" title="8">  <span class="dt">na.action =</span> na.omit</a>
+<a class="sourceLine" id="cb22-9" title="9">)</a>
+<a class="sourceLine" id="cb22-10" title="10"></a>
+<a class="sourceLine" id="cb22-11" title="11"><span class="kw">coefficients</span>(cars_ols<span class="op">$</span>finalModel)</a></code></pre></div>
+<pre><code>##                                          (Intercept) 
+##                                         45.795137024 
+##                                         Displacement 
+##                                         -3.897041594 
+##                                            Cylinders 
+##                                          0.591798369 
+##                                                Gears 
+##                                          0.133841817 
+##                                      TransmissionCVT 
+##                                          4.864490054 
+##                                   TransmissionManual 
+##                                         -1.582604120 
+##                `AspirationTurbocharged/Supercharged` 
+##                                         -2.533164224 
+##                     `\\`Lockup Torque Converter\\`Y` 
+##                                         -3.224584126 
+##                           `Drive2-Wheel Drive, Rear` 
+##                                         -2.865060504 
+##                                 `Drive4-Wheel Drive` 
+##                                         -3.542661160 
+##                               `DriveAll Wheel Drive` 
+##                                         -2.945736451 
+##                                  `\\`Max Ethanol\\`` 
+##                                         -0.004295138 
+##    `\\`Recommended Fuel\\`Premium Unleaded Required` 
+##                                         -0.322194856 
+## `\\`Recommended Fuel\\`Regular Unleaded Recommended` 
+##                                         -1.199460113 
+##                        `\\`Intake Valves Per Cyl\\`` 
+##                                         -1.682415911 
+##                       `\\`Exhaust Valves Per Cyl\\`` 
+##                                         -2.339357182 
+## `\\`Fuel injection\\`Multipoint/sequential ignition` 
+##                                         -0.866682965</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1">cars_ols<span class="op">$</span>results<span class="op">$</span>RMSE</a></code></pre></div>
+<pre><code>## [1] 3.027263</code></pre>
+</div>
+<div id="ridge-1" class="section level3">
+<h3><span class="header-section-number">6.0.8</span> RIDGE</h3>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1"><span class="kw">set.seed</span>(<span class="dv">455</span>)</a>
+<a class="sourceLine" id="cb26-2" title="2">cars_ridge &lt;-<span class="st"> </span><span class="kw">train</span>(</a>
+<a class="sourceLine" id="cb26-3" title="3">  MPG <span class="op">~</span><span class="st"> </span>.,</a>
+<a class="sourceLine" id="cb26-4" title="4">  <span class="dt">data =</span> cars_train, </a>
+<a class="sourceLine" id="cb26-5" title="5">  <span class="dt">method =</span> <span class="st">&quot;glmnet&quot;</span>,</a>
+<a class="sourceLine" id="cb26-6" title="6">  <span class="dt">trControl =</span> <span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;cv&quot;</span>, </a>
+<a class="sourceLine" id="cb26-7" title="7">                           <span class="dt">number =</span> <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb26-8" title="8">  <span class="dt">tuneGrid =</span> <span class="kw">data.frame</span>(<span class="dt">alpha =</span> <span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb26-9" title="9">                        <span class="dt">lambda =</span> <span class="dv">10</span><span class="op">^</span><span class="kw">seq</span>(<span class="op">-</span><span class="dv">3</span>,<span class="dv">0</span>, <span class="dt">length =</span> <span class="dv">100</span>)),</a>
+<a class="sourceLine" id="cb26-10" title="10">  <span class="dt">na.action =</span> na.omit</a>
+<a class="sourceLine" id="cb26-11" title="11">)</a>
+<a class="sourceLine" id="cb26-12" title="12"></a>
+<a class="sourceLine" id="cb26-13" title="13">cars_ridge<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb26-14" title="14"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>lambda,<span class="dt">y=</span>RMSE))<span class="op">+</span></a>
+<a class="sourceLine" id="cb26-15" title="15"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="fl">.5</span>, <span class="dt">alpha =</span> <span class="fl">.5</span>)</a></code></pre></div>
+<p><img src="Shrinkage-Methods_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1">cars_ridge<span class="op">$</span>bestTune<span class="op">$</span>lambda</a></code></pre></div>
+<pre><code>## [1] 0.3764936</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1"><span class="kw">plot</span>(cars_ridge<span class="op">$</span>finalModel,<span class="dt">xvar=</span><span class="st">&quot;lambda&quot;</span>,<span class="dt">label=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<p><img src="Shrinkage-Methods_files/figure-html/unnamed-chunk-13-2.png" width="672" /></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1"><span class="kw">set.seed</span>(<span class="dv">455</span>)</a>
+<a class="sourceLine" id="cb30-2" title="2">cars_ridge_best &lt;-<span class="st"> </span><span class="kw">train</span>(</a>
+<a class="sourceLine" id="cb30-3" title="3">  MPG <span class="op">~</span><span class="st"> </span>.,</a>
+<a class="sourceLine" id="cb30-4" title="4">  <span class="dt">data =</span> cars_train, </a>
+<a class="sourceLine" id="cb30-5" title="5">  <span class="dt">method =</span> <span class="st">&quot;glmnet&quot;</span>,</a>
+<a class="sourceLine" id="cb30-6" title="6">  <span class="dt">trControl =</span> <span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;cv&quot;</span>, </a>
+<a class="sourceLine" id="cb30-7" title="7">                           <span class="dt">number =</span> <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb30-8" title="8">  <span class="dt">tuneGrid =</span> <span class="kw">data.frame</span>(<span class="dt">alpha =</span> <span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb30-9" title="9">                        <span class="dt">lambda =</span> <span class="fl">0.3764936</span>),</a>
+<a class="sourceLine" id="cb30-10" title="10">  <span class="dt">na.action =</span> na.omit</a>
+<a class="sourceLine" id="cb30-11" title="11">)</a>
+<a class="sourceLine" id="cb30-12" title="12"></a>
+<a class="sourceLine" id="cb30-13" title="13">cars_ridge_best<span class="op">$</span>results<span class="op">$</span>RMSE</a></code></pre></div>
+<pre><code>## [1] 3.074365</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1"><span class="kw">coefficients</span>(cars_ridge_best<span class="op">$</span>finalModel,<span class="fl">0.3764936</span>)</a></code></pre></div>
+<pre><code>## 17 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                                           1
+## (Intercept)                                    40.342866679
+## Displacement                                   -2.050820140
+## Cylinders                                      -0.428421434
+## Gears                                          -0.006356826
+## TransmissionCVT                                 4.854359841
+## TransmissionManual                             -0.681414491
+## AspirationTurbocharged/Supercharged            -1.445104026
+## `Lockup Torque Converter`Y                     -2.363515467
+## Drive2-Wheel Drive, Rear                       -2.443552211
+## Drive4-Wheel Drive                             -3.149263901
+## DriveAll Wheel Drive                           -2.555057150
+## `Max Ethanol`                                  -0.007087217
+## `Recommended Fuel`Premium Unleaded Required    -0.322227450
+## `Recommended Fuel`Regular Unleaded Recommended -0.614567700
+## `Intake Valves Per Cyl`                        -0.319477188
+## `Exhaust Valves Per Cyl`                       -1.440650265
+## `Fuel injection`Multipoint/sequential ignition -0.811204711</code></pre>
+</div>
+<div id="lasso-2" class="section level3">
+<h3><span class="header-section-number">6.0.9</span> LASSO</h3>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1"><span class="kw">set.seed</span>(<span class="dv">455</span>)</a>
+<a class="sourceLine" id="cb34-2" title="2">cars_lasso &lt;-<span class="st"> </span><span class="kw">train</span>(</a>
+<a class="sourceLine" id="cb34-3" title="3">  MPG <span class="op">~</span><span class="st"> </span>.,</a>
+<a class="sourceLine" id="cb34-4" title="4">  <span class="dt">data =</span> cars_train, </a>
+<a class="sourceLine" id="cb34-5" title="5">  <span class="dt">method =</span> <span class="st">&quot;glmnet&quot;</span>,</a>
+<a class="sourceLine" id="cb34-6" title="6">  <span class="dt">trControl =</span> <span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;cv&quot;</span>, </a>
+<a class="sourceLine" id="cb34-7" title="7">                           <span class="dt">number =</span> <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb34-8" title="8">  <span class="dt">tuneGrid =</span> <span class="kw">data.frame</span>(<span class="dt">alpha =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb34-9" title="9">                        <span class="dt">lambda =</span> <span class="dv">10</span><span class="op">^</span><span class="kw">seq</span>(<span class="op">-</span><span class="dv">3</span>, <span class="dv">-2</span>, <span class="dt">length =</span> <span class="dv">100</span>)),</a>
+<a class="sourceLine" id="cb34-10" title="10">  <span class="dt">na.action =</span> na.omit</a>
+<a class="sourceLine" id="cb34-11" title="11">)</a>
+<a class="sourceLine" id="cb34-12" title="12"></a>
+<a class="sourceLine" id="cb34-13" title="13">cars_lasso<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb34-14" title="14"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>lambda,<span class="dt">y=</span>RMSE))<span class="op">+</span></a>
+<a class="sourceLine" id="cb34-15" title="15"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="fl">.5</span>, <span class="dt">alpha =</span> <span class="fl">.5</span>)</a></code></pre></div>
+<p><img src="Shrinkage-Methods_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" title="1">cars_lasso<span class="op">$</span>bestTune<span class="op">$</span>lambda</a></code></pre></div>
+<pre><code>## [1] 0.009545485</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" title="1"><span class="kw">plot</span>(cars_lasso<span class="op">$</span>finalModel,<span class="dt">xvar=</span><span class="st">&#39;lambda&#39;</span>,<span class="dt">label=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<p><img src="Shrinkage-Methods_files/figure-html/unnamed-chunk-15-2.png" width="672" /></p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1"><span class="kw">set.seed</span>(<span class="dv">455</span>)</a>
+<a class="sourceLine" id="cb38-2" title="2">cars_lasso_best &lt;-<span class="st"> </span><span class="kw">train</span>(</a>
+<a class="sourceLine" id="cb38-3" title="3">  MPG <span class="op">~</span><span class="st"> </span>.,</a>
+<a class="sourceLine" id="cb38-4" title="4">  <span class="dt">data =</span> cars_train, </a>
+<a class="sourceLine" id="cb38-5" title="5">  <span class="dt">method =</span> <span class="st">&quot;glmnet&quot;</span>,</a>
+<a class="sourceLine" id="cb38-6" title="6">  <span class="dt">trControl =</span> <span class="kw">trainControl</span>(<span class="dt">method =</span> <span class="st">&quot;cv&quot;</span>, </a>
+<a class="sourceLine" id="cb38-7" title="7">                           <span class="dt">number =</span> <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb38-8" title="8">  <span class="dt">tuneGrid =</span> <span class="kw">data.frame</span>(<span class="dt">alpha =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb38-9" title="9">                        <span class="dt">lambda =</span> <span class="fl">0.009545485</span>),</a>
+<a class="sourceLine" id="cb38-10" title="10">  <span class="dt">na.action =</span> na.omit</a>
+<a class="sourceLine" id="cb38-11" title="11">)</a>
+<a class="sourceLine" id="cb38-12" title="12"></a>
+<a class="sourceLine" id="cb38-13" title="13">cars_lasso_best<span class="op">$</span>results<span class="op">$</span>RMSE</a></code></pre></div>
+<pre><code>## [1] 3.025527</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1"><span class="kw">coefficients</span>(cars_lasso_best<span class="op">$</span>finalModel,<span class="fl">0.009545485</span>)</a></code></pre></div>
+<pre><code>## 17 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                                           1
+## (Intercept)                                    44.941298911
+## Displacement                                   -3.627883003
+## Cylinders                                       0.429529564
+## Gears                                           0.111933750
+## TransmissionCVT                                 4.871103500
+## TransmissionManual                             -1.385540577
+## AspirationTurbocharged/Supercharged            -2.369556969
+## `Lockup Torque Converter`Y                     -3.033422195
+## Drive2-Wheel Drive, Rear                       -2.790786041
+## Drive4-Wheel Drive                             -3.486954923
+## DriveAll Wheel Drive                           -2.884344642
+## `Max Ethanol`                                  -0.004037301
+## `Recommended Fuel`Premium Unleaded Required    -0.276010969
+## `Recommended Fuel`Regular Unleaded Recommended -1.085319852
+## `Intake Valves Per Cyl`                        -1.177366006
+## `Exhaust Valves Per Cyl`                       -2.500098547
+## `Fuel injection`Multipoint/sequential ignition -0.845456686</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" title="1"><span class="kw">coefficients</span>(cars_lasso_best<span class="op">$</span>finalModel,<span class="fl">0.1</span>)</a></code></pre></div>
+<pre><code>## 17 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                                          1
+## (Intercept)                                    39.75545077
+## Displacement                                   -2.83657321
+## Cylinders                                       .         
+## Gears                                           .         
+## TransmissionCVT                                 4.79076756
+## TransmissionManual                              .         
+## AspirationTurbocharged/Supercharged            -1.44680028
+## `Lockup Torque Converter`Y                     -1.61692083
+## Drive2-Wheel Drive, Rear                       -1.94168304
+## Drive4-Wheel Drive                             -2.78768269
+## DriveAll Wheel Drive                           -2.22100559
+## `Max Ethanol`                                  -0.00222014
+## `Recommended Fuel`Premium Unleaded Required     .         
+## `Recommended Fuel`Regular Unleaded Recommended -0.10788122
+## `Intake Valves Per Cyl`                        -0.27837487
+## `Exhaust Valves Per Cyl`                       -1.97358320
+## `Fuel injection`Multipoint/sequential ignition -0.49852192</code></pre>
+</div>
+<div id="test-data-1" class="section level3">
+<h3><span class="header-section-number">6.0.10</span> Test data</h3>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" title="1">cars_test<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb44-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pred_mpg =</span> <span class="kw">predict</span>(cars_ols, <span class="dt">newdata =</span> cars_test)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb44-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">RMSE =</span> <span class="kw">sqrt</span>(<span class="kw">mean</span>((MPG <span class="op">-</span><span class="st"> </span>pred_mpg)<span class="op">^</span><span class="dv">2</span>)))</a></code></pre></div>
+<pre><code>## # A tibble: 1 x 1
+##    RMSE
+##   &lt;dbl&gt;
+## 1  2.54</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" title="1">cars_test<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pred_mpg =</span> <span class="kw">predict</span>(cars_ridge_best, <span class="dt">newdata =</span> cars_test)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb46-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">RMSE =</span> <span class="kw">sqrt</span>(<span class="kw">mean</span>((MPG <span class="op">-</span><span class="st"> </span>pred_mpg)<span class="op">^</span><span class="dv">2</span>)))</a></code></pre></div>
+<pre><code>## # A tibble: 1 x 1
+##    RMSE
+##   &lt;dbl&gt;
+## 1  2.56</code></pre>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" title="1">cars_test<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb48-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pred_mpg =</span> <span class="kw">predict</span>(cars_lasso_best, <span class="dt">newdata =</span> cars_test)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb48-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">RMSE =</span> <span class="kw">sqrt</span>(<span class="kw">mean</span>((MPG <span class="op">-</span><span class="st"> </span>pred_mpg)<span class="op">^</span><span class="dv">2</span>)))</a></code></pre></div>
+<pre><code>## # A tibble: 1 x 1
+##    RMSE
+##   &lt;dbl&gt;
+## 1  2.53</code></pre>
+</div>
+</div>
+<p style="text-align: center;">
+<a href="5-how-lasso-performs-variable-selection.html"><button class="btn btn-default">Previous</button></a>
+<a href="6-1-data-summary.html"><button class="btn btn-default">Next</button></a>
+</p>
+</div>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+---
+title: "Shrinkage Methods"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: 
+  bookdown::pdf_book: default
+  bookdown::gitbook: default
+documentclass: book
+classoption: openany
+---
+# Motivation
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```
+
+## The ordinary least squares model 
+$$Y = \beta_0+\beta_1X_1+\beta_2X_2+...+\beta_pX_p+\epsilon$$
+is the most commonly used method to describe the relationship between the response variable Y and a set of variables X. However, the OLS model is not perfect and it faces two major criticism and one major drawback:
+
+ * First, the OLS model could result in low prediction accuracy because it often has large variance and low bias.
+ 
+ * The second weakness is efficient interpretation. If we have a dataset with large number of predictors, we would usually choose a small subset of predictors which are strongly associated with the response variable; thus, it seems to be a loss that we still include the weak predictors in our model.
+ 
+ * Also, OLS does not work when there are more predictors than data points. That being said, it does not generate a unique solution($p > n$).
+ 
+However, the linear regression model is easy to regress, interpret, and perform inference; therefore, we would still use linear regression method but we want to modify it in a way such that we could have higher prediction accuracy and stronger interpretation.
+
+## Several concepts for better linear regression model 
+
+One of the key questions to find the best model is to determine if we should include a variable in our model or not. The process of making decision on each variable is called variable selection. There are two different ways of selecting variables: discrete and continuous selection process. We would briefly talk about both solutions in the following session.
+
+The first method is subset selection:
+  
+  * Best subset selection algorithm: This is a sort of brute force technique because it is computationally expensive. In order to perform best subset selection, we generate the all possible subsets of $p$ variables in a dataset, and then we can select the one with the least error.
+    
+  * backward stepwise selection: This is a more feasible version of subset selection. We first generate the full model of the dataset. Then among all the features, we test the deletion of each variable using a chosen model fit criterion, deleting the variable (if any) whose loss gives the most statistically insignificant deterioration of the model fit, and repeating this process until no further variables can be deleted without a statistically insignificant loss of fit.
+    
+  * More stepwise selection: forward stepwise selection, bidirectional elimination and so on (Tibshirani el at., 2001).
+    
+Problems with subset selection algorithms:
+
+  * They are mostly computationally expensive.
+  
+  * They are discrete selection processes(1 variable at a time).
+  
+  * The algorithms only do locally(each step) best choices. Once a variable is deleted, it is never going back in.
+  
+## Shrinkage:
+
+Shrinkage refers to the shrinking coefficients as we include another penalty term for large coefficients. As we increase the penalty, all coefficients would shrink towards zero. However, among all those variables, the coefficients of the predictors which are worse at explaining the variation in the response variable would decrease faster than others. Therefore, as the penalty increases, we could gradually see how each coefficient decrease, which can support us choose the important variables. There are two different kinds of shrinkage algorithms:
+  
+  * Lasso (L1 shrinkage methods): performs both shrinking coefficients and variable selection(shrink some variables to 0). Since it uses $l_1$ norm of $\beta$, we can also call this L1 shrinkage methods.
+  
+  * Ridge (L2 shrinkage methods): only shrinks the coefficients but does not perform variable selection. It uses $l_2$ norm of $\beta$, hence it is also called L2 shrinkage methods.
+
+There are certain benefits associated with the continuous variable selection. First, the results would be less variable than the discrete process if there is a little change in the dataset (Tibshini, 1996). Second, it is more computatioinally efficient compared to the best subset selection process. Therefore, we want to dive into this method and discuss its advantages and limitations.   
+
+  
+## Literature Review
+  In 1996, Robert Tishirani posted `Regression Shrinkage and Selection Via the Lasso`, which was the first time Lasso was brought into statistics. Later, Tibshirani together with other well known statisticians published `An introduction to statistical learning: with applications in R`, which includes simple explaination of Lasso and Ridge Regression. In a more complicated version of textbook Tibshirani and other statisticians published, `The Elements of statistical learning: data mining, inference, and prediction`, they included a much more complete and comprehensive perspective on general Shrinkage techniques, including a Bayesian interpretation of the Lasso. Most of our work will be based on our understanding from this textbook.
+
+## Outline 
+  In section 2 and 3, we will be covering the definition of ridge regression and how ridge regression performs shrinkage. In section 4 and 5, we will be stating the definition of Lasso and how Lasso performs both shrinkage and variable selection. In section 6, we will implement ridge regression and Lasso on some tidied data that are commonly used for machine learning to show the continous process that these shrinkage methods provide. In section 7, we will be studying Bayesian interpretation of Lasso. In section 8, we are going to cover some limitations of shrinkage methods and go through some other related topics. 

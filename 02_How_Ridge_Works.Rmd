@@ -1,0 +1,89 @@
+# How Ridge Works
+Recall from Linear Algebra that if we want to solve for $x \beta =y$, we can do:
+$$
+x^Tx\beta = x^Ty
+$$
+We then take the inverse of $\boldsymbol{x}^T\boldsymbol{x}$ from the LHS, and multiply both sides by the inverse:
+$$
+\beta = (x^Tx)^{-1}x^Ty
+$$
+Then we have come up with a least squares solution for x in $x\beta = y$.
+From here then we derive that: $\hat\beta_{OLS} = (X^T X)^{-1} X^T y$.
+We will use a very similar approach to show how the shrinkage work for ridge regression.
+
+### Univariate example
+Let's consider a very simple model: $y = \beta x + \epsilon$, with an L2(ridge regression) penalty on $\hat\beta$ and a least-squares loss function on $\hat\epsilon$, where $\hat\epsilon$ is the estimator for prediction error and $\hat\epsilon = \sum_{i = 1}^{N}(y_i - x_i\beta)$. We can then expand the expression for sum of squared residuals to be minimized as:
+$$
+\hat\beta = arg\min_\beta\{\sum_{i = 1}^{N}(y_i - x_i\beta)^2 + \lambda\sum_{j = 1}^{p}\beta_j^2\}
+$$
+Which if we transform into a Matrix form, gives:
+$$
+\hat{\beta} = arg\min_\beta\{(\vec{y} - \vec{x}\hat\beta)^{T}(\vec{y} - \vec{x}\hat\beta) + \lambda\hat{\beta}^2\}
+$$
+Which we can further expand into:
+$$
+\hat\beta = arg\min_\beta\{\vec{y}^{T}\vec{y} - 2\vec{y}^T\vec{x}\hat{\beta} + \hat{\beta}\vec{x}^T\vec{x}\hat{\beta} + \lambda\hat{\beta}^2\}
+$$
+Now if we take the derivative w.r.t $\hat\beta$ and set equal to 0, we can calculate the the estimator for ridge regression coefficients $\hat\beta$:
+$$
+-2\vec{y}^T\vec{x} + 2\vec{x}^T\vec{x}\hat{\beta} + 2\lambda\hat{\beta} =_{set} 0
+$$
+Where we can obtain:
+$$
+\hat{\beta} = \vec{y}^T\vec{x}{(\vec{x}^T\vec{x} + \lambda)}^{-1}
+$$
+
+### Higher dimension ridge regression
+Note that here we are using an univariate example(1-dimensional y and 1-dimensional x), in a more complicated case, we calculate the sum of squared residual in the same manner:
+$$
+RSS(\lambda) = (\boldsymbol{y} - \boldsymbol{X}\hat\beta)^T(\boldsymbol{y} - \boldsymbol{X}\hat\beta) + \lambda\hat\beta^T\hat\beta
+$$
+Where we can get:
+$$
+\hat{\beta} = {(\boldsymbol{X}^T\boldsymbol{X} + \lambda\boldsymbol{I}_{pp})}^{-1}\boldsymbol{X}^T\boldsymbol{Y}
+$$
+Which is very similar to the result from the univariate example.
+
+### The tuning parameter
+To further understand why $\lambda$ helps shrink the coefficients, we are going to use singular value decomposition(SVD) to examine the effect of $\lambda$.
+Let the singular value decomposition of the ($n \times p$)-dimensional design matrix X be:
+$$
+\boldsymbol{X} = \boldsymbol{U}_x\boldsymbol{D}_x\boldsymbol{V}^{T}_x
+$$
+where $\boldsymbol{D}_x$ is an ($n \times n$)-dimensional diagonal matrix with the singular values, $\boldsymbol{U}_x$ is an ($n \times n$)-dimensional matrix
+with columns containing the left singular vectors (denoted $u_i$), and $\boldsymbol{V}_x$ is a ($p \times n$)-dimensional matrix with columns
+containing the right singular vectors (denoted $V_i$). The columns of $\boldsymbol{U}_x$ and $\boldsymbol{V}_x$ are orthogonal: 
+$$
+\boldsymbol{U}^T_x\boldsymbol{U}_x = \boldsymbol{I}_{nn} = \boldsymbol{V}^T_x\boldsymbol{V}_x
+$$
+Recall that the OLS estimator is: 
+$$
+\hat\beta_{OLS} = (X^T X)^{-1} X^T y
+$$
+We can then rewrite the fitted values from OLS as:
+\begin{align*}
+\boldsymbol{X}\hat\beta_{OLS} &= \boldsymbol{U}_x\boldsymbol{D}_x\boldsymbol{V}^{T}_x(\boldsymbol{V}_x\boldsymbol{D}_x\boldsymbol{U}_x^T\boldsymbol{U}_x\boldsymbol{D}_x\boldsymbol{V}^T_x)^{-1}\boldsymbol{V}_x\boldsymbol{D}_x\boldsymbol{U}_x^Ty\\
+ &=\boldsymbol{U}_x\boldsymbol{D}_x\boldsymbol{V}^{T}_x(\boldsymbol{V}_x\boldsymbol{D}_x\boldsymbol{D}_x\boldsymbol{V}^{T}_x)^{-1}\boldsymbol{V}_x\boldsymbol{D}_x\boldsymbol{U}_x^Ty\\
+ &= \boldsymbol{U}_x\boldsymbol{D}_x\boldsymbol{V}^{T}_x{\boldsymbol{V}^{T}}^{-1}_x\boldsymbol{D}_x^{-1}\boldsymbol{D}_x^{-1}{\boldsymbol{V}}^{-1}_x\boldsymbol{V}_x\boldsymbol{D}_x\boldsymbol{U}_x^Ty\\
+ &= \boldsymbol{U}_x\boldsymbol{D}_x\boldsymbol{D}_x^{-1}\boldsymbol{D}_x^{-1}\boldsymbol{D}_x\boldsymbol{U}_x^Ty\\
+ &= \boldsymbol{U}_x\boldsymbol{U}^T_xy\\
+ &= {\sum_{j = 1}^{p}\boldsymbol{u}_j(1)\boldsymbol{u}_j^T\boldsymbol{y}}
+\end{align*}
+We can also rewrite $\hat\beta^{ridge}$ as:
+\begin{align*}
+\hat\beta &= {(\boldsymbol{X}^T\boldsymbol{X} + \lambda\boldsymbol{I}_{pp})}^{-1}\boldsymbol{X}^T\boldsymbol{Y}\\
+ &= (\boldsymbol{V}_x\boldsymbol{D}_x\boldsymbol{U}_x^T\boldsymbol{U}_x\boldsymbol{D}_x\boldsymbol{V}^T_x + \lambda\boldsymbol{I}_{pp})^{-1}\boldsymbol{V}_x\boldsymbol{D}_x\boldsymbol{U}^T_x\boldsymbol{Y}\\
+ &= (\boldsymbol{V}_x\boldsymbol{D}_x^2\boldsymbol{V}_x^T + \lambda\boldsymbol{V}_x\boldsymbol{V}_x^T)^{-1}\boldsymbol{V}_x\boldsymbol{D}_x\boldsymbol{U}^T_x\boldsymbol{Y}\\
+ &= (\boldsymbol{V}_x[\boldsymbol{D}_x^2 + \lambda\boldsymbol{I}_{nn}]^{-1}\boldsymbol{V}^T_x)^{-1}\boldsymbol{V}_x\boldsymbol{D}_x\boldsymbol{U}^T_x\boldsymbol{Y} \\
+ &= (\boldsymbol{V}_x^{-T}[\boldsymbol{D}_x^2 + \lambda\boldsymbol{I}_{nn}]^{-1}\boldsymbol{V}_x^{-1})\boldsymbol{V}_x\boldsymbol{D}_x\boldsymbol{U}^T_x\boldsymbol{Y}\\
+ &= \boldsymbol{V}_x^{-T}[\boldsymbol{D}_x^2 + \lambda\boldsymbol{I}_{nn}]^{-1}\boldsymbol{D}_x\boldsymbol{U}^T_x\boldsymbol{Y}
+\end{align*}
+Then the ridge solutions becomes:
+\begin{align*}
+\boldsymbol{X}\hat\beta &= \boldsymbol{X}\boldsymbol{V}_x^{-T}[\boldsymbol{D}_x^2 + \lambda\boldsymbol{I}_{nn}]^{-1}\boldsymbol{D}_x\boldsymbol{U}^T_x\boldsymbol{Y}\\
+ &= \boldsymbol{U}_x\boldsymbol{D}_x\boldsymbol{V}^{T}_x\boldsymbol{V}_x^{-T}[\boldsymbol{D}_x^2 + \lambda\boldsymbol{I}_{nn}]^{-1}\boldsymbol{D}_x\boldsymbol{U}^T_x\boldsymbol{Y}\\
+ &= \boldsymbol{U}_x\boldsymbol{D}_x(\boldsymbol{D}_x^2 + \lambda\boldsymbol{I}_{nn})^{-1}\boldsymbol{D}_x\boldsymbol{U}^T_x\boldsymbol{Y}\\
+ &= \sum_{j = 1}^{p}\boldsymbol{u}_j\frac{d^2_{j}}{d^2_{j} + \lambda}\boldsymbol{u}_j^T\boldsymbol{y}
+\end{align*}
+
+Note that since $\lambda \geq 0$, we have $\frac{d^2_{j}}{d^2_{j} + \lambda} \leq 1$. Ridge regression computes the coordinates of $\boldsymbol{y}$ with respect to the orthonormal basis U. Then it shrinks these coordinates by the factor $\frac{d^2_{j}}{d^2_{j} + \lambda}$. This means that variable with smaller singular value ($d_j$) is shrunk more than those with larger singular values. Note that variables with smaller singular values explains less of the variation of our sample(less important). This could be proved using the sample covariance matrix.

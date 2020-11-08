@@ -1,0 +1,98 @@
+# Bayesian Interpretation
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+library(LaplacesDemon)
+```
+
+## Bayesian Interpretation of Lasso
+
+We can show that $\hat{\boldsymbol\beta}_{LASSO}$ has a Bayesian interpretation. In particular, we can show that is a Bayes estimator for $\boldsymbol\beta$ assuming a multivariate Normal likelihood for $\mathbf{y}$:
+$$f(y\mid \boldsymbol\beta, \sigma^2)\sim N(\mathbf{X}\boldsymbol\beta, \sigma^2\mathbf{I}),$$
+and an independent double exponential (aka Laplace) prior for $\boldsymbol\beta$: 
+$$f(\beta_j) = \left(\frac{\lambda}{2} \right)\exp(-\lambda |\beta_j|)$$
+
+```{r,echo=FALSE, results='hold'}
+beta <- seq(from=-5, to=5, by=0.1)
+plot(beta, dlaplace(beta,0,0.5), ylim=c(0,1), type="l", main="Probability Function",
+     ylab="density", col="red")
+```
+
+The above is an example of what the distribution of the double exponential (aka Laplace) prior looks like. From the grapg, we can see that as it goes towards the two sides, the density gradually goes to exactly 0. This explains why it is possible for Lasso coefficients to shrink towards 0 and ultimately be exactly 0.
+
+## Posterior
+
+The posterior distribution for $\boldsymbol\beta$ (assuming $\sigma^2 = 1$ for simplicity): 
+
+$$\begin{aligned}
+g(\boldsymbol\beta \mid y)&\propto f(y \mid \boldsymbol\beta, \sigma^2) f(\boldsymbol\beta)\\
+&= f(y \mid \boldsymbol\beta) \prod_{i=1}^p f(\beta_j)\text{, by independence assumption}\\
+&=(2\pi)^{-n/2}\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta) \right) \left(\frac{\lambda}{2}\right)^p \exp\left(-\lambda\sum_{j=1}^p |\beta_j|)\right)\\
+&\propto\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta) \right) \exp\left(-\lambda\sum_{j=1}^p |\beta_j|)\right)\\
+&=\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda\sum_{j=1}^p |\beta_j|)\right)
+\end{aligned}$$
+
+## Posterior Mode
+
+Maximizing the posterior distribution, or minimizing the $-\log$ posterior, leads to $\hat\beta_{LASSO}$.
+
+$$\begin{aligned}\\
+&\arg\max\text{ }\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda\sum_{j=1}^p |\beta_j|)\right)\\
+=\text{ }&\arg\max\text{ }-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda\sum_{j=1}^p |\beta_j|\\
+=\text{ }&\arg\min\text{ }\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)+\lambda\sum_{j=1}^p |\beta_j|\\
+=\text{ }&\arg\min\text{ -log posterior}\\
+\end{aligned}$$
+
+$$\begin{aligned}
+\arg\min\text{ -log posterior}
+&=\arg\min-\log(\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda\sum_{j=1}^p |\beta_j|)\right))\\
+&=\arg\min-\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda\sum_{j=1}^p |\beta_j|)\right)\\
+&=\arg\min\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)+\lambda\sum_{j=1}^p |\beta_j|\\
+&=\hat\beta_{LASSO}\text{, by definition}
+\end{aligned}$$
+
+## Bayesian Interpretation of Ridge
+
+In a similar way, we can show that $\hat{\boldsymbol\beta}_{RIDGE}$ has a Bayesian interpretation by using a different prior. In particular, we can show that is a Bayes estimator for $\boldsymbol\beta$ assuming a multivariate Normal likelihood for $\mathbf{y}$:
+$$f(y\mid \boldsymbol\beta, \sigma^2)\sim N(\mathbf{X}\boldsymbol\beta, \sigma^2\mathbf{I}),$$
+and an independent normal prior for $\boldsymbol\beta$: 
+$$f(\beta_j) = \left(\frac{\lambda}{\sigma^2\sqrt{2\pi}} \right)\exp(-\frac{1}{2}(\frac{\lambda\beta_j}{\sigma^2})^2)$$
+
+```{r,echo=FALSE}
+x <- seq(-4, 4, length=100)
+hx <- dnorm(x)
+plot(x, hx, type="l", lty=2, main="Probability Function",
+     ylab="density", col="red")
+```
+
+The above is an example of what the distribution of the normal prior looks like. From the grapg, we can see that as it goes towards the two sides, the density gradually shrinks towards 0. This explains why it is possible for Ridge coefficients to shrink towards 0 and cannot goes to exactly 0.
+
+## Posterior
+
+The posterior distribution for $\boldsymbol\beta$ (assuming $\sigma^2 = 1$ for simplicity): 
+
+$$\begin{aligned}
+g(\boldsymbol\beta \mid y)&\propto f(y \mid \boldsymbol\beta, \sigma^2) f(\boldsymbol\beta)\\
+&= f(y \mid \boldsymbol\beta) \prod_{i=1}^p f(\beta_j)\text{, by independence assumption}\\
+&=(2\pi)^{-n/2}\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta) \right) \left(\frac{\lambda}{\sqrt{2\pi}} \right)^p\exp(-\frac{\lambda^2}{2}\sum_{j=1}^p\beta_j^2)\\
+&\propto\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta) \right) \exp\left(-\lambda^*\sum_{j=1}^p\beta_j^2\right)\\
+&=\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda^*\sum_{j=1}^p\beta_j^2\right)
+\end{aligned}$$
+
+## Posterior Mode
+
+Maximizing the posterior distribution, or minimizing the $-\log$ posterior, leads to $\hat\beta_{RIDGE}$.
+
+$$\begin{aligned}\\
+&\arg\max\text{ }\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda^*\sum_{j=1}^p\beta_j^2\right)\\
+=\text{ }&\arg\max\text{ }-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda^*\sum_{j=1}^p\beta_j^2\\
+=\text{ }&\arg\min\text{ }\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)+\lambda^*\sum_{j=1}^p\beta_j^2\\
+=\text{ }&\arg\min\text{ -log posterior}\\
+\end{aligned}$$
+
+$$\begin{aligned}
+\arg\min\text{ -log posterior}
+&=\arg\min-\log(\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda^*\sum_{j=1}^p\beta_j^2\right))\\
+&=\arg\min-\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda^*\sum_{j=1}^p\beta_j^2\right)\\
+&=\arg\min\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)+\lambda^*\sum_{j=1}^p\beta_j^2\\
+&=\hat\beta_{RIDGE}\text{, by definition}
+\end{aligned}$$

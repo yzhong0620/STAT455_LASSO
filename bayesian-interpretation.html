@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>1.2 Bayesian Interpretation | 06_Bayesian_Lasso.utf8</title>
+  <meta name="description" content="" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="1.2 Bayesian Interpretation | 06_Bayesian_Lasso.utf8" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="1.2 Bayesian Interpretation | 06_Bayesian_Lasso.utf8" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="generalization-of-shrinkage-methods-from-bayes-perspective.html"/>
+
+<script src="assets/jquery-2.2.3/jquery.min.js"></script>
+<link href="assets/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="assets/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="assets/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="assets/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="assets/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="assets/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="assets/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="bayesian-lasso.html"><a href="bayesian-lasso.html"><i class="fa fa-check"></i><b>1</b> Bayesian Lasso</a><ul>
+<li class="chapter" data-level="1.1" data-path="generalization-of-shrinkage-methods-from-bayes-perspective.html"><a href="generalization-of-shrinkage-methods-from-bayes-perspective.html"><i class="fa fa-check"></i><b>1.1</b> Generalization of shrinkage methods from Bayes perspective</a></li>
+<li class="chapter" data-level="1.2" data-path="bayesian-interpretation.html"><a href="bayesian-interpretation.html"><i class="fa fa-check"></i><b>1.2</b> Bayesian Interpretation</a><ul>
+<li class="chapter" data-level="1.2.1" data-path="bayesian-interpretation.html"><a href="bayesian-interpretation.html#posterior"><i class="fa fa-check"></i><b>1.2.1</b> Posterior</a></li>
+<li class="chapter" data-level="1.2.2" data-path="bayesian-interpretation.html"><a href="bayesian-interpretation.html#posterior-mode"><i class="fa fa-check"></i><b>1.2.2</b> Posterior Mode</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="bayesian-interpretation" class="section level2">
+<h2><span class="header-section-number">1.2</span> Bayesian Interpretation</h2>
+<p>We can show that <span class="math inline">\(\hat{\boldsymbol\beta}_{LASSO}\)</span> has a Bayesian interpretation. In particular, we can show that is a Bayes estimator for <span class="math inline">\(\boldsymbol\beta\)</span> assuming a multivariate Normal likelihood for <span class="math inline">\(\mathbf{y}\)</span>:
+<span class="math display">\[f(y\mid \boldsymbol\beta, \sigma^2)\sim N(\mathbf{X}\boldsymbol\beta, \sigma^2\mathbf{I}),\]</span>
+and an independent double exponential (aka Laplace) prior for <span class="math inline">\(\boldsymbol\beta\)</span>:
+<span class="math display">\[f(\beta_j) = \left(\frac{\lambda}{2} \right)\exp(-\lambda |\beta_j|)\]</span></p>
+<div id="posterior" class="section level3">
+<h3><span class="header-section-number">1.2.1</span> Posterior</h3>
+<p>The posterior distribution for <span class="math inline">\(\boldsymbol\beta\)</span> (assuming <span class="math inline">\(\sigma^2 = 1\)</span> for simplicity):</p>
+<p><span class="math display">\[\begin{aligned}
+g(\boldsymbol\beta \mid y)&amp;\propto f(y \mid \boldsymbol\beta, \sigma^2) f(\boldsymbol\beta)\\
+&amp;= f(y \mid \boldsymbol\beta) \prod_{i=1}^p f(\beta_j)\text{, by independence assumption}\\
+&amp;=(2\pi)^{-n/2}\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta) \right) \left(\frac{\lambda}{2}\right)^p \exp\left(-\lambda\sum_{j=1}^p |\beta_j|)\right)\\
+&amp;\propto\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta) \right) \exp\left(-\lambda\sum_{j=1}^p |\beta_j|)\right)\\
+&amp;=\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda\sum_{j=1}^p |\beta_j|)\right)
+\end{aligned}\]</span></p>
+</div>
+<div id="posterior-mode" class="section level3">
+<h3><span class="header-section-number">1.2.2</span> Posterior Mode</h3>
+<p>Maximize the posterior distribution, or minimize the -log posterior</p>
+<p><span class="math display">\[\begin{aligned}\\
+&amp;\max\text{ }\exp\left(-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda\sum_{j=1}^p |\beta_j|)\right)\\
+&amp;=\max\text{ }-\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)-\lambda\sum_{j=1}^p |\beta_j|\\
+&amp;=\min\text{ }\frac{1}{2}(\mathbf{y} - \mathbf{X}\boldsymbol\beta)^\top (\mathbf{y} - \mathbf{X}\boldsymbol\beta)+\lambda\sum_{j=1}^p |\beta_j|\\
+&amp;=\min\text{ -log posterior}\\
+\end{aligned}\]</span></p>
+</div>
+</div>
+<!-- </div> -->
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="generalization-of-shrinkage-methods-from-bayes-perspective.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="assets/gitbook-2.6.7/js/app.min.js"></script>
+<script src="assets/gitbook-2.6.7/js/lunr.js"></script>
+<script src="assets/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="assets/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="assets/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="assets/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="assets/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="assets/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="assets/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+},
+"toolbar": {
+"position": "static"
+},
+"search": false
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,267 @@
+---
+title: "In-Class Activity"
+author: "Yunyang Zhong"
+date: "4/22/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(rsample) #for splitting data
+library(caret)
+library(ISLR)
+library(glmnet)
+```
+
+## Example
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+# Load the data
+# Highly correlated
+# Numerical
+bf<-read.csv("Bodyfat.csv")
+
+set.seed(455)
+bf_split <- initial_split(bf%>%select(-Density), prop = .7)
+bf_train <- training(bf_split)
+bf_test <- testing(bf_split)
+```
+
+### OLS
+
+```{r}
+set.seed(455)
+bf_ols <- train(
+  bodyfat ~ .,
+  data = bf_train, 
+  method = "lm",
+  trControl = trainControl(method = "cv", 
+                           number = 10), 
+  na.action = na.omit
+)
+
+coefficients(bf_ols$finalModel)
+
+bf_ols$results$RMSE
+```
+
+### RIDGE
+
+```{r}
+set.seed(455)
+bf_ridge <- train(
+  bodyfat ~ .,
+  data = bf_train, 
+  method = "glmnet",
+  trControl = trainControl(method = "cv", 
+                           number = 10),
+  tuneGrid = data.frame(alpha = 0, 
+                        lambda = 10^seq(-3,0, length = 100)),
+  na.action = na.omit
+)
+
+bf_ridge%>%
+  ggplot(aes(x=lambda,y=RMSE))+
+  geom_point(size = .5, alpha = .5)
+
+bf_ridge$bestTune$lambda
+
+plot(bf_ridge$finalModel,xvar="lambda",label=TRUE)
+```
+
+```{r}
+set.seed(455)
+bf_ridge_best <- train(
+  bodyfat ~ .,
+  data = bf_train, 
+  method = "glmnet",
+  trControl = trainControl(method = "cv", 
+                           number = 10),
+  tuneGrid = data.frame(alpha = 0, 
+                        lambda = 0.6135907),
+  na.action = na.omit
+)
+
+bf_ridge_best$results$RMSE
+```
+
+### LASSO
+
+```{r}
+set.seed(455)
+bf_lasso <- train(
+  bodyfat ~ .,
+  data = bf_train, 
+  method = "glmnet",
+  trControl = trainControl(method = "cv", 
+                           number = 10),
+  tuneGrid = data.frame(alpha = 1, 
+                        lambda = 10^seq(-3, -1, length = 100)),
+  na.action = na.omit
+)
+
+bf_lasso%>%
+  ggplot(aes(x=lambda,y=RMSE))+
+  geom_point(size = .5, alpha = .5)
+
+bf_lasso$bestTune$lambda
+
+plot(bf_lasso$finalModel,xvar='lambda',label=TRUE)
+```
+
+```{r}
+set.seed(455)
+bf_lasso_best <- train(
+  bodyfat ~ .,
+  data = bf_train, 
+  method = "glmnet",
+  trControl = trainControl(method = "cv", 
+                           number = 10),
+  tuneGrid = data.frame(alpha = 1, 
+                        lambda = 0.05214008),
+  na.action = na.omit
+)
+
+bf_lasso_best$results$RMSE
+```
+
+### Test data
+
+```{r}
+bf_test%>%
+  mutate(pred_bf = predict(bf_ols, newdata = bf_test)) %>% 
+  summarize(RMSE = sqrt(mean((bodyfat - pred_bf)^2)))
+
+bf_test%>%
+  mutate(pred_bf = predict(bf_ridge_best, newdata = bf_test)) %>% 
+  summarize(RMSE = sqrt(mean((bodyfat - pred_bf)^2)))
+
+bf_test%>%
+  mutate(pred_bf = predict(bf_lasso_best, newdata = bf_test)) %>% 
+  summarize(RMSE = sqrt(mean((bodyfat - pred_bf)^2)))
+```
+
+## OLS vs RIDGE vs LASSO example 2
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+# Load the data
+# Not highly correlated
+# Numerical+categorial
+cars<- read_csv("https://raw.githubusercontent.com/juliasilge/supervised-ML-case-studies-course/master/data/cars2018.csv")
+
+set.seed(???)
+cars_split <- initial_split(cars%>%select(-`Model Index`, -Model), prop = .7)
+cars_train <- training(cars_split)
+cars_test <- testing(cars_split)
+```
+
+### OLS
+
+```{r}
+set.seed(???)
+cars_ols <- train(
+  ? ~ ?,
+  data = ?, 
+  method = ?,
+  trControl = trainControl(method = "cv", 
+                           number = 10), 
+  na.action = na.omit
+)
+
+coefficients(cars_ols$finalModel)
+
+cars_ols$results$RMSE
+```
+
+### RIDGE
+
+```{r}
+set.seed(???)
+cars_ridge <- train(
+  ? ~ ?,
+  data = ?, 
+  method = "glmnet",
+  trControl = trainControl(method = "cv", 
+                           number = 10),
+  tuneGrid = data.frame(alpha = 0, 
+                        lambda = 10^seq(-3,0, length = 100)),
+  na.action = na.omit
+)
+
+cars_ridge%>%
+  ggplot(aes(x=lambda,y=RMSE))+
+  geom_point(size = .5, alpha = .5)
+
+cars_ridge$bestTune$lambda
+
+plot(cars_ridge$finalModel,xvar="lambda",label=TRUE)
+```
+
+```{r}
+set.seed(???)
+cars_ridge_best <- train(
+  ? ~ ?,
+  data = ?, 
+  method = "glmnet",
+  trControl = trainControl(method = "cv", 
+                           number = 10),
+  tuneGrid = data.frame(alpha = 0, 
+                        lambda = ?),
+  na.action = na.omit
+)
+
+cars_ridge_best$results$RMSE
+```
+
+### LASSO
+
+(The code for LASSO is the same as for RIDGE except that you need to use alpha = 1.)
+
+```{r}
+# Try on your own!
+```
+
+```{r}
+# Your turn!
+```
+
+## Using test data to see the effect of your model
+
+```{r}
+cars_test%>%
+  mutate(pred_mpg = predict(cars_ols, newdata = cars_test)) %>% 
+  summarize(RMSE = sqrt(mean((MPG - pred_mpg)^2)))
+
+cars_test%>%
+  mutate(pred_mpg = predict(cars_ridge_best, newdata = cars_test)) %>% 
+  summarize(RMSE = sqrt(mean((MPG - pred_mpg)^2)))
+
+cars_test%>%
+  mutate(pred_mpg = predict(cars_lasso_best, newdata = cars_test)) %>% 
+  summarize(RMSE = sqrt(mean((MPG - pred_mpg)^2)))
+```
+
+## Bayesian Lasso proof
+
+Assumptions:
+@ A multivariate Normal likelihood for $\mathbf{y}$:
+$$f(y\mid \boldsymbol\beta, \sigma^2)\sim N(\mathbf{X}\boldsymbol\beta, \sigma^2\mathbf{I})$$
+@ An independent double exponential (aka Laplace) prior for $\boldsymbol\beta$: 
+$$f(\beta_j) = \left(\frac{\lambda}{2} \right)\exp(-\lambda |\beta_j|)$$
+@ $\sigma^2 = 1$ for simplicity
+
+The posterior distribution for $\boldsymbol\beta$
+$$\begin{aligned}
+g(\boldsymbol\beta \mid y)&\propto f(y \mid \boldsymbol\beta, \sigma^2) f(\boldsymbol\beta)\\
+&= ???
+\end{aligned}$$
+
+### Posterior Mode
+
+Prove that maximize the posterior distribution is the same as minimizing the -log posterior!

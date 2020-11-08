@@ -1,0 +1,18 @@
+# Ridge Regression
+
+## Definition
+Recall that the ordinary least squares model estimates coefficients with the goal of minimizing the sum of the squared residuals:
+$$RSS = \sum_{i=1}^n (y_i - \beta_0-\sum_{j=1}^p\beta_jx_{ij})^2$$
+Since ridge regression penalizes for large coefficients and uses $l_2$ norm of coefficients as the penalty term, we know that its estimatation of coefficients should minimize the combination of RSS and sum of the squared coefficients: 
+
+## Ridge Regression:
+$$
+\hat{\beta}^{ridge} = arg\min_\beta\{\sum_{i = 1}^{N}(y_i - \beta_0 - \sum_{j = 1}^{p}x_{ij}\beta_j)^2 + \lambda\sum_{j = 1}^{p}\beta_j^2\} \ \ \ (1)
+$$
+Which is the same as:
+$$
+\hat{\beta}^{ridge} = arg\min_\beta\{\sum_{i = 1}^{N}(y_i - \beta_0 - \sum_{j = 1}^{p}x_{ij}\beta_j)^2\},\text{ subject to} \sum_{j = 1}^{p}\beta_j^2 \leq t
+$$
+where there is a one-to-one corresondence between the parameters $\lambda$ and $t$. 
+
+$\lambda$ is the tuning parameter, and $\lambda\sum_{j = 1}^{p}\beta_j^2$ is the skrinkage penalty. If $\lambda$ is zero, then the penalty term equals to zero, and we would minimize the RSS, which is equivalent as ordinary least squares model; if $\lambda$ is large, then the penalty term would be larger as well, the coefficients would be smaller; therefore, if $\lambda$ approaches infinity, then the coefficients would approach zero. The selection of the optimal tuning parameter is often based on the evidence which is the MSE, and we would discuss the choice of tuning parameter later in the application.
